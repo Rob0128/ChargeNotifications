@@ -38,13 +38,14 @@ namespace ChargeNotifications.Controllers
             /*Validate this payload*/
             /*Accept a customer ID then send request to the db and return a Charge in PDF form for that customers charges*/
 
-            var charges = await _context.Charge.Where(c =>  c.Id == Id && c.ChargeDate == DateTime.Today.AddDays(-1)).ToListAsync();
+            var dateUsed = DateTime.Today.AddDays(-1);
 
-            var t = new HelperFunctions.CreatePdf();
-            var d = await Task.Run(HelperFunctions.CreatePdf());
+            var charges = await _context.Charge.Where(c =>  c.Id == Id && c.ChargeDate == dateUsed).ToListAsync();
 
+            await HelperFunctions.CreatePdf(Id, dateUsed);
 
             return charges == null ? NotFound() : Ok(charges);
+
 
 
             /*var count = 0;
