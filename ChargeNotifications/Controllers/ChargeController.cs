@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.OData.Query;
 using System.Data.OleDb;
 using ChargeNotifications.Models;
 using Microsoft.EntityFrameworkCore;
+using ChargeNotifications.Functions;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 
 namespace ChargeNotifications.Controllers
 {
@@ -28,16 +31,21 @@ namespace ChargeNotifications.Controllers
              await _context.Charge.Where(c => c.ChargeDate == DateO);*/
 
 
-        [HttpPost]
-        public async Task<IEnumerable<Charge>> PostAsync(JObject payload)
+        [HttpGet("id")]
+        public async Task<IActionResult> GetById(int Id)
         {
 
             /*Validate this payload*/
             /*Accept a customer ID then send request to the db and return a Charge in PDF form for that customers charges*/
 
+            var charges = await _context.Charge.Where(c =>  c.Id == Id && c.ChargeDate == DateTime.Today.AddDays(-1)).ToListAsync();
+
+            var t = new HelperFunctions.CreatePdf();
+            var d = await Task.Run(HelperFunctions.CreatePdf());
 
 
-            object value = await _context.Charge.FindAsync(payload.GetEnumerator().Current).ToListAsync();
+            return charges == null ? NotFound() : Ok(charges);
+
 
             /*var count = 0;
             List<String> resp = new List<String>();
