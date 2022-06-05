@@ -40,18 +40,21 @@ namespace ChargeNotifications.Controllers
 
             var dateUsed = DateTime.Today.AddDays(-1);
 
-            var charges = await _context.Charge.Where(c =>c.ChargeDate == dateUsed).GroupBy(e => new { e.Id }).Select(group => new Charge
-            {
-                Id = group.Key.Id,
-                Name = group.Key.Name,
-            }).ToListAsync();
+            var charges = await _context.Charge.Where(c => c.ChargeDate == dateUsed).GroupBy(c => new { c.CustomerId, c.CostPence, c.Description }).Select(c => new Charge { Id = c.Key.CustomerId, CostPence = c.Key.CostPence, Description = c.Key.Description }).ToListAsync();
 
-            Parallel.ForEach(charges, async group =>
-            {
-                foreach (var charge in group)
-                {
+            var test = from c in _context.Charge
+                        where c.ChargeDate == dateUsed
+                        select c;
+
+            
+            /*var grpCharges = await charges.GroupBy(c => new { c.CustomerId }).ToListAsync();*/
+
+            Parallel.ForEach(charges, async charge => { 
+                /*foreach(var charge in group)
+                {*/
                     await HelperFunctions.CreatePdf(charge.Id, dateUsed, charge.CostPence, charge.Description);
-                }
+              /*  };*/
+
             });
 
           

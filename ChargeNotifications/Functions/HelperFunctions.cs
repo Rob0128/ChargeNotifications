@@ -17,7 +17,6 @@ namespace ChargeNotifications.Functions
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             
-
             String filename = "Invoices/Recipt_Id-" + Id.ToString() + "_" + recordDate.ToFileTime().ToString().Replace("/", "_");
 
             String htmlFilename = filename + ".html";
@@ -35,7 +34,6 @@ namespace ChargeNotifications.Functions
                     
                 }
             }
-
 
             var html = File.ReadAllText(filename);
 

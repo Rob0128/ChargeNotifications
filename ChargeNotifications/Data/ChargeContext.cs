@@ -12,6 +12,9 @@ namespace ChargeNotifications.Data
 
         public DbSet<Charge> Charge { get; set; }
 
-      
+        public static implicit operator ChargeContext(Charge v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
