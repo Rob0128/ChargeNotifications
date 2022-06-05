@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using ChargeNotifications.Functions;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using System.Linq;
 
 namespace ChargeNotifications.Controllers
 {
@@ -21,14 +22,13 @@ namespace ChargeNotifications.Controllers
     {
 
         private readonly ChargeContext _context;
-
         public ChargeController(ChargeContext context) => _context = context;
-    
-       
-/*
-        [HttpGet]
-        public async Task<IEnumerable<Charge>> Get() =>
-             await _context.Charge.Where(c => c.ChargeDate == DateO);*/
+
+
+        /*
+                [HttpGet]
+                public async Task<IEnumerable<Charge>> Get() =>
+                     await _context.Charge.Where(c => c.ChargeDate == DateO);*/
 
 
         [HttpGet("id")]
@@ -40,10 +40,21 @@ namespace ChargeNotifications.Controllers
 
             var dateUsed = DateTime.Today.AddDays(-1);
 
-            var charges = await _context.Charge.Where(c =>  c.Id == Id && c.ChargeDate == dateUsed).ToListAsync();
+            var charges = await _context.Charge.Where(c =>c.ChargeDate == dateUsed).GroupBy(e => new { e.Id }).Select(group => new Charge
+            {
+                Id = group.Key.Id,
+                Name = group.Key.Name,
+            }).ToListAsync();
 
-            await HelperFunctions.CreatePdf(Id, dateUsed);
+            Parallel.ForEach(charges, async group =>
+            {
+                foreach (var charge in group)
+                {
+                    await HelperFunctions.CreatePdf(charge.Id, dateUsed, charge.CostPence, charge.Description);
+                }
+            });
 
+          
             return charges == null ? NotFound() : Ok(charges);
 
 

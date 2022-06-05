@@ -12,7 +12,7 @@ namespace ChargeNotifications.Functions
     public class HelperFunctions
     {
 
-        public async static Task CreatePdf(int Id, DateTime recordDate) {
+        public async static Task CreatePdf(int Id, DateTime recordDate, int cost, String desc) {
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -28,10 +28,10 @@ namespace ChargeNotifications.Functions
             {
                 using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    w.WriteLineAsync("<div style=\"height:100px\"></div>");
-                    w.WriteLineAsync("Customer Number: " + Id.ToString());
-                    w.WriteLineAsync("<br>");
-                    w.WriteLineAsync("Customer Name: " + Id.ToString());
+                    await w.WriteLineAsync("<div style=\"height:100px\"></div>");
+                    await w.WriteLineAsync("Customer Number: " + Id.ToString());
+                    await w.WriteLineAsync("<br>");
+                    await w.WriteLineAsync("Customer Name: " + Id.ToString() +"<br>" );
                     
                 }
             }
