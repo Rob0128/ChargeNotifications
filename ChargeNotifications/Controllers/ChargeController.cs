@@ -1,17 +1,8 @@
 ﻿using ChargeNotifications.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Http;
+using ChargeNotifications.Functions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using ChargeNotifications.Functions;
-using Microsoft.AspNetCore.OData.Query;
-using System.Data.OleDb;
 using ChargeNotifications.Models;
-using Microsoft.EntityFrameworkCore;
-using ChargeNotifications.Functions;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using System.Linq;
+using Microsoft.Data.SqlClient;
 
 namespace ChargeNotifications.Controllers
 {
@@ -22,75 +13,99 @@ namespace ChargeNotifications.Controllers
     {
 
         private readonly ChargeContext _context;
+        private object reader;
+
         public ChargeController(ChargeContext context) => _context = context;
 
-
-        /*
-                [HttpGet]
-                public async Task<IEnumerable<Charge>> Get() =>
-                     await _context.Charge.Where(c => c.ChargeDate == DateO);*/
-
-
-        [HttpGet("id")]
-        public async Task<IActionResult> GetById(int Id)
+        [HttpGet]
+        public async Task<IActionResult> GenPDF()
         {
 
-            /*Validate this payload*/
-            /*Accept a customer ID then send request to the db and return a Charge in PDF form for that customers charges*/
+            List<Charge> charges = null;
 
-            var dateUsed = DateTime.Today.AddDays(-1);
+            var dateUsed = DateTime.Today.AddDays(-3);
+            string sqlFormattedDate = dateUsed.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
-            var charges = await _context.Charge.Where(c =>c.ChargeDate == dateUsed).GroupBy(e => new { e.Id }).Select(group => new Charge
+            await using (SqlConnection cn = new SqlConnection("Server = localhost; Database = master; Trusted_Connection = True;"))
             {
-                Id = group.Key.Id,
-                Name = group.Key.Name,
-            }).ToListAsync();
+                cn.Open();
+                SqlCommand cmd = new SqlCommand(@"SELECT * FROM Charge", cn);
+                var datareader = cmd.ExecuteReader();
+                charges = GetList<Charge>(datareader);
+            }
 
-            Parallel.ForEach(charges, async group =>
-            {
-                foreach (var charge in group)
-                {
-                    await HelperFunctions.CreatePdf(charge.Id, dateUsed, charge.CostPence, charge.Description);
-                }
-            });
-
-          
+            SeparateListAndGenPdfs(charges);
+                                
             return charges == null ? NotFound() : Ok(charges);
 
+        }
 
-
-            /*var count = 0;
-            List<String> resp = new List<String>();
-            foreach (var item in payload)
+        private List<T>? GetList<T>(SqlDataReader datareader)
+        {
+            List<T>? list = new List<T>();
+            while (datareader.Read())
             {
-                count++;
-                if (count > 2)
+                var type = typeof(T);
+                T obj = (T)Activator.CreateInstance(type);
+                foreach (var item in type.GetProperties())
                 {
-                    resp.Add(item.ToString());
+                    var propType = item.PropertyType;
+                    item.SetValue(obj, Convert.ChangeType(datareader[item.Name].ToString(), propType));
+                }
+                list.Add(obj);
+            }
+            return list;
+        }
 
+        private async void SeparateListAndGenPdfs(List<Charge> data)
+        {
+            List<Charge>? Game1 = new List<Charge>();
+            List<Charge>? Game2 = new List<Charge>();
+            List<Charge>? Game3 = new List<Charge>();
+
+            var prevId = 0;
+            foreach (var item in data)
+            {
+
+                if (prevId == item.CustomerId && prevId > 0)
+                {
+                    if (item.Description == "Game 1")
+                    {
+                        Game1.Add(item);
+                    }
+                    else if (item.Description == "Game 2")
+                    {
+                        Game2.Add(item);
+                    }
+                    else if (item.Description == "Game 3")
+                    {
+                        Game3.Add(item);
+                    }
+                }
+                else if (prevId > 0)
+                {
+
+                    //GenerateChargePdf pdf
+                    await HelperFunctions.CreatePdf(Game1, Game2, Game3);
+
+                    //reset lists to empty for the next iteration
+                    prevId = item.CustomerId;
+                    Game1 = new List<Charge>();
+                    Game2 = new List<Charge>();
+                    Game3 = new List<Charge>();
                 }
                 else
                 {
-
+                    prevId = item.CustomerId;
                 }
-            }*/
-            /*HttpClient ht = new HttpClient();
-            //var thisId = JObject.Parse(payload.ToString());
-            var x = await ht.GetAsync("https://localhost:7110/WeatherForecast?$select=Summary").ConfigureAwait(false);
 
-            return Ok(x);
-    */
-            /* }*/
+            }
 
-            /*   [HttpGet]
-               public List<Charge> Get()
-               {
-                   var x = _context.Charge.Where(c => c.ChargeDate == DateTime.Today.AddDays(-1)).ToList();
-                   return x;
-               }*/
 
         }
 
-        }
+       
+
+    }
 
 }
