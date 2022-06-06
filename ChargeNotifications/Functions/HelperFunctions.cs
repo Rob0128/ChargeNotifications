@@ -37,6 +37,7 @@ namespace ChargeNotifications.Functions
                 recordDate = game3.First().ChargeDate;
             }
 
+            //will need to create an "Invoices folder to set up
             String filename = "Invoices/Recipt_Id-" + Id.ToString() + "_" + recordDate.ToFileTime().ToString().Replace("/", "_");
 
             String htmlFilename = filename + ".html";
