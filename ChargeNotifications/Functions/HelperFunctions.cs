@@ -20,10 +20,12 @@ namespace ChargeNotifications.Functions
 
             var Id = 0;
             var recordDate = new DateTime(2015, 12, 25);
+            var game1Charge = 0;
             if (game1 != null) { 
                 
                 Id = game1.First().CustomerId;
                 recordDate = game1.First().ChargeDate;
+                game1Charge = game1.First().CostPence;
             }
             else if (game2 != null) { 
                 
@@ -52,7 +54,19 @@ namespace ChargeNotifications.Functions
                     await w.WriteLineAsync("Customer Number: " + Id.ToString());
                     await w.WriteLineAsync("<br>");
                     await w.WriteLineAsync("Customer Name: " + Id.ToString() +"<br>" );
-                   
+                    await w.WriteLineAsync("<div style=\"height:100px\"></div>");
+                    foreach (var purchase in game1)
+                    {
+                        await w.WriteLineAsync("<div style=\"height:100px\">" + purchase.ChargeDescription + "  " + purchase.CostPence.ToString() + "</div>");
+                    }
+                    foreach (var purchase in game2)
+                    {
+                        await w.WriteLineAsync("<div style=\"height:100px\">" + purchase.ChargeDescription + "  " + purchase.CostPence.ToString() + "</div>");
+                    }
+                    foreach (var purchase in game3)
+                    {
+                        await w.WriteLineAsync("<div style=\"height:100px\">" + purchase.ChargeDescription + "  " + purchase.CostPence.ToString() + "</div>");
+                    }
                 }
             }
 

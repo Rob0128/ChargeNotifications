@@ -29,7 +29,7 @@ namespace ChargeNotifications.Controllers
             await using (SqlConnection cn = new SqlConnection("Server = localhost; Database = master; Trusted_Connection = True;"))
             {
                 cn.Open();
-                SqlCommand cmd = new SqlCommand(@"SELECT * FROM Charge ORDER BY 'CustomerId, Description", cn);
+                SqlCommand cmd = new SqlCommand(@"SELECT * FROM Charge ORDER BY 'CustomerId', 'Description'", cn);
                 var datareader = cmd.ExecuteReader();
                 charges = GetList<Charge>(datareader);
             }
@@ -67,42 +67,39 @@ namespace ChargeNotifications.Controllers
             foreach (var item in data)
             {
 
+                
+                if (item.Description == "Game 1")
+                {
+                    Game1.Add(item);
+                }
+                else if (item.Description == "Game 2")
+                {
+                    Game2.Add(item);
+                }
+                else if (item.Description == "Game 3")
+                {
+                    Game3.Add(item);
+                }
+
+                //check if should add to the charge or start new charge
                 if (prevId == item.CustomerId && prevId > 0)
                 {
-                    if (item.Description == "Game 1")
-                    {
-                        Game1.Add(item);
-                    }
-                    else if (item.Description == "Game 2")
-                    {
-                        Game2.Add(item);
-                    }
-                    else if (item.Description == "Game 3")
-                    {
-                        Game3.Add(item);
-                    }
+                    prevId = item.CustomerId;
+
                 }
                 else if (prevId > 0)
                 {
-                    if (item.Description == "Charge1")
-                    {
-                        Game1.Add(item);
-                    }
-                    else if (item.Description == "Game 2")
-                    {
-                        Game2.Add(item);
-                    }
-                    else if (item.Description == "Game 3")
-                    {
-                        Game3.Add(item);
-                    }
-
+                    
                     //GenerateChargePdf pdf
-                    await HelperFunctions.CreatePdf(Game1, Game2, Game3);
+                    if(Game1.Count > 0 || Game2.Count > 0 || Game3.Count > 0)
+                    {
+                        await HelperFunctions.CreatePdf(Game1, Game2, Game3);
 
-                    Game1 = new List<Charge>();
-                    Game2 = new List<Charge>();
-                    Game3 = new List<Charge>();
+                        Game1 = new List<Charge>();
+                        Game2 = new List<Charge>();
+                        Game3 = new List<Charge>();
+
+                    }
 
                     //reset lists to empty for the next iteration
                     prevId = item.CustomerId;
