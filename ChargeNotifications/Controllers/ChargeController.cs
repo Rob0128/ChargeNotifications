@@ -68,15 +68,15 @@ namespace ChargeNotifications.Controllers
             {
 
                 
-                if (item.Description == "Game 1")
+                if (item.Description == "Charge1")
                 {
                     Game1.Add(item);
                 }
-                else if (item.Description == "Game 2")
+                else if (item.Description == "Charge2")
                 {
                     Game2.Add(item);
                 }
-                else if (item.Description == "Game 3")
+                else if (item.Description == "Charge3")
                 {
                     Game3.Add(item);
                 }

@@ -51,21 +51,27 @@ namespace ChargeNotifications.Functions
                 using (StreamWriter w = new StreamWriter(fs, Encoding.UTF8))
                 {
                     await w.WriteLineAsync("<div style=\"height:100px\"></div>");
-                    await w.WriteLineAsync("Customer Number: " + Id.ToString());
+                    await w.WriteLineAsync("<div style=\"margin-left:100px\">Customer Number: " + Id.ToString() + "</div>");
                     await w.WriteLineAsync("<br>");
-                    await w.WriteLineAsync("Customer Name: " + Id.ToString() +"<br>" );
+                    await w.WriteLineAsync("<div style=\"margin-left:100px\">Charge Date: " + recordDate.ToString() + "</div>" + "<br>" );
                     await w.WriteLineAsync("<div style=\"height:100px\"></div>");
+                    await w.WriteLineAsync("<div style=\"margin-left:200px\">Game 1</div>");
                     foreach (var purchase in game1)
                     {
-                        await w.WriteLineAsync("<div style=\"height:100px\">" + purchase.ChargeDescription + "  " + purchase.CostPence.ToString() + "</div>");
+                        await w.WriteLineAsync("<div style=\"height:100px; margin-left:200px\">" + purchase.ChargeDescription + " | " + "Cost Pence: " + purchase.CostPence.ToString()
+                                                                        + " | " + "Cost Total: " + purchase.CostTotal.ToString() + "</div>");
                     }
+                    await w.WriteLineAsync("<div style=\"margin-left:200px\">Game 2</div>");
                     foreach (var purchase in game2)
                     {
-                        await w.WriteLineAsync("<div style=\"height:100px\">" + purchase.ChargeDescription + "  " + purchase.CostPence.ToString() + "</div>");
+                        await w.WriteLineAsync("<div style=\"height:100px; margin-left:200px\">" + purchase.ChargeDescription + " | " + "Cost Pence: " + purchase.CostPence.ToString()
+                                                                        + " | " + "Cost Total: " + purchase.CostTotal.ToString() + "</div>");
                     }
+                    await w.WriteLineAsync("<div style=\"margin-left:200px\">Game 3</div>");
                     foreach (var purchase in game3)
                     {
-                        await w.WriteLineAsync("<div style=\"height:100px\">" + purchase.ChargeDescription + "  " + purchase.CostPence.ToString() + "</div>");
+                        await w.WriteLineAsync("<div style=\"height:100px; margin-left:200px\">" + purchase.ChargeDescription + " | " + "Cost Pence: " + purchase.CostPence.ToString()
+                                                                        + " | " + "Cost Total: " + purchase.CostTotal.ToString() + "</div>");
                     }
                 }
             }
