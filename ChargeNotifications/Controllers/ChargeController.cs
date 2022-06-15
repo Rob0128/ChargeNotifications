@@ -23,6 +23,7 @@ namespace ChargeNotifications.Controllers
 
             List<Charge> charges = null;
 
+            //set date to today or day
             var dateUsed = DateTime.Today.AddDays(-3);
             string sqlFormattedDate = dateUsed.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
@@ -67,7 +68,42 @@ namespace ChargeNotifications.Controllers
             foreach (var item in data)
             {
 
-                
+                //check if should add to the charge or start new charge
+                if (prevId == item.CustomerId && prevId > 0)
+                {
+                    prevId = item.CustomerId;
+
+                }
+                else if (prevId > 0)
+                {
+
+                    //GenerateChargePdf pdf
+                    if (Game1.Count > 0 || Game2.Count > 0 || Game3.Count > 0)
+                    {
+                        try
+                        {
+                            await HelperFunctions.CreatePdf(Game1, Game2, Game3);
+
+                            Game1 = new List<Charge>();
+                            Game2 = new List<Charge>();
+                            Game3 = new List<Charge>();
+                        }
+                        catch (Exception e)
+                        {
+                            System.Diagnostics.Debug.WriteLine(e.Message);
+                        }
+                    }
+
+                    //reset lists to empty for the next iteration
+                    prevId = item.CustomerId;
+
+                }
+                else
+                {
+                    prevId = item.CustomerId;
+                }
+
+
                 if (item.Description == "Charge1")
                 {
                     Game1.Add(item);
@@ -81,34 +117,7 @@ namespace ChargeNotifications.Controllers
                     Game3.Add(item);
                 }
 
-                //check if should add to the charge or start new charge
-                if (prevId == item.CustomerId && prevId > 0)
-                {
-                    prevId = item.CustomerId;
-
-                }
-                else if (prevId > 0)
-                {
-                    
-                    //GenerateChargePdf pdf
-                    if(Game1.Count > 0 || Game2.Count > 0 || Game3.Count > 0)
-                    {
-                        await HelperFunctions.CreatePdf(Game1, Game2, Game3);
-
-                        Game1 = new List<Charge>();
-                        Game2 = new List<Charge>();
-                        Game3 = new List<Charge>();
-
-                    }
-
-                    //reset lists to empty for the next iteration
-                    prevId = item.CustomerId;
-                    
-                }
-                else
-                {
-                    prevId = item.CustomerId;
-                }
+                
 
                 
 

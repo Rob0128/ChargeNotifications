@@ -21,6 +21,8 @@ namespace ChargeNotifications.Functions
             var Id = 0;
             var recordDate = new DateTime(2015, 12, 25);
             var game1Charge = 0;
+            var game2Charge = 0;
+            var game3Charge = 0;
             if (game1 != null) { 
                 
                 Id = game1.First().CustomerId;
@@ -31,15 +33,19 @@ namespace ChargeNotifications.Functions
                 
                 Id = game2.First().CustomerId;
                 recordDate = game2.First().ChargeDate;
+                game2Charge = game1.First().CostPence;
+
             }
             else if (game3 != null)
             {
                 
                 Id = game3.First().CustomerId;
                 recordDate = game3.First().ChargeDate;
+                game3Charge = game1.First().CostPence;
+
             }
 
-            //will need to create an "Invoices folder to set up
+            //will need to create an "Invoices" folder to set up
             String filename = "Invoices/Recipt_Id-" + Id.ToString() + "_" + recordDate.ToFileTime().ToString().Replace("/", "_");
 
             String htmlFilename = filename + ".html";
