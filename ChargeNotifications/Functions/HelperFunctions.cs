@@ -23,25 +23,26 @@ namespace ChargeNotifications.Functions
             var game1Charge = 0;
             var game2Charge = 0;
             var game3Charge = 0;
-            if (game1 != null) { 
+
+            if (game1.Count != 0) { 
                 
                 Id = game1.First().CustomerId;
                 recordDate = game1.First().ChargeDate;
                 game1Charge = game1.First().CostPence;
             }
-            else if (game2 != null) { 
+            else if (game2.Count != 0) { 
                 
                 Id = game2.First().CustomerId;
                 recordDate = game2.First().ChargeDate;
-                game2Charge = game1.First().CostPence;
+                game2Charge = game2.First().CostPence;
 
             }
-            else if (game3 != null)
+            else if (game3.Count != 0)
             {
                 
                 Id = game3.First().CustomerId;
                 recordDate = game3.First().ChargeDate;
-                game3Charge = game1.First().CostPence;
+                game3Charge = game3.First().CostPence;
 
             }
 

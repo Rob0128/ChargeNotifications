@@ -1,0 +1,9 @@
+﻿<div style="height:100px"></div>
+<div style="margin-left:100px">Customer Number: 28</div>
+<br>
+<div style="margin-left:100px">Charge Date: 23/05/2022 00:00:00</div><br>
+<div style="height:100px"></div>
+<div style="margin-left:200px">Game 1</div>
+<div style="margin-left:200px">Game 2</div>
+<div style="height:100px; margin-left:200px">test desc | Cost Pence: 11 | Cost Total: 111</div>
+<div style="margin-left:200px">Game 3</div>

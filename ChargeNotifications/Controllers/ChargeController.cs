@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ChargeNotifications.Models;
 using Microsoft.Data.SqlClient;
 
+
 namespace ChargeNotifications.Controllers
 {
 
@@ -68,9 +69,23 @@ namespace ChargeNotifications.Controllers
             foreach (var item in data)
             {
 
+
                 //check if should add to the charge or start new charge
                 if (prevId == item.CustomerId && prevId > 0)
                 {
+                    if (item.Description == "Charge1")
+                    {
+                        Game1.Add(item);
+                    }
+                    else if (item.Description == "Charge2")
+                    {
+                        Game2.Add(item);
+                    }
+                    else if (item.Description == "Charge3")
+                    {
+                        Game3.Add(item);
+                    }
+
                     prevId = item.CustomerId;
 
                 }
@@ -82,7 +97,7 @@ namespace ChargeNotifications.Controllers
                     {
                         try
                         {
-                            await HelperFunctions.CreatePdf(Game1, Game2, Game3);
+                            HelperFunctions.CreatePdf(Game1, Game2, Game3);
 
                             Game1 = new List<Charge>();
                             Game2 = new List<Charge>();
@@ -94,28 +109,43 @@ namespace ChargeNotifications.Controllers
                         }
                     }
 
+                    //start new item
+                    if (item.Description == "Charge1")
+                    {
+                        Game1.Add(item);
+                    }
+                    else if (item.Description == "Charge2")
+                    {
+                        Game2.Add(item);
+                    }
+                    else if (item.Description == "Charge3")
+                    {
+                        Game3.Add(item);
+                    }
+
                     //reset lists to empty for the next iteration
                     prevId = item.CustomerId;
 
                 }
                 else
                 {
+                    if (item.Description == "Charge1")
+                    {
+                        Game1.Add(item);
+                    }
+                    else if (item.Description == "Charge2")
+                    {
+                        Game2.Add(item);
+                    }
+                    else if (item.Description == "Charge3")
+                    {
+                        Game3.Add(item);
+                    }
                     prevId = item.CustomerId;
                 }
 
 
-                if (item.Description == "Charge1")
-                {
-                    Game1.Add(item);
-                }
-                else if (item.Description == "Charge2")
-                {
-                    Game2.Add(item);
-                }
-                else if (item.Description == "Charge3")
-                {
-                    Game3.Add(item);
-                }
+              
 
                 
 
